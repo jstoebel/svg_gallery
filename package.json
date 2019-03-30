@@ -18,7 +18,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "connect-mongo": "^2.0.3",
     "express": "^4.16.4",
     "express-graphql": "^0.7.1",
     "graphql": "^14.2.0",
