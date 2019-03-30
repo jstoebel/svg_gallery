@@ -4,7 +4,7 @@ import dbConnection from '../config/database';
 class Image extends Model {}
 
 Image.init({
-  imageName: {
+  name: {
     type: Sequelize.STRING,
     allowNull: false
   },
@@ -17,3 +17,5 @@ Image.init({
     allowNull: false,
   }
 }, {sequelize: dbConnection});
+
+export default Image

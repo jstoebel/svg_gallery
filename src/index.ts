@@ -3,6 +3,7 @@ import express from 'express';
 import graphqlHTTP from 'express-graphql';
 import schema from './schema';
 import dbConnection from './config/database';
+import Image from './models/Image'
 
 // test database connection
 
@@ -35,14 +36,3 @@ app.listen( port, () => {
     // tslint:disable-next-line:no-console
     console.log( `server started at http://localhost:${ port }` );
 } );
-
-// console.log('testing Image');
-
-// import Image from './models/Image'
-
-// const i = new Image({name: 'newFile'});
-// i.save()
-//   .then(() => console.log('saved!'))
-
-
-
