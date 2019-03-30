@@ -1,5 +1,3 @@
-import spam from 'graphql/type/index'
-
 // example resolver
 /**
  *  name(args are root, args, context, info) {
@@ -17,4 +15,6 @@ export const resolvers = {
     },
   },
 };
+
+export default resolvers;
 
