@@ -1,13 +1,20 @@
 import { gql } from 'apollo-server-express';
 
 const typeDefs = gql`
-  type Hero {
-    _id: ID
-    name: String!
-    alias: String!
+  type Image {
+    id: ID!
+    path: String!
+    fileName: String!
+    mimetype: String!
+    altText: String!
+    svg: String!
   }
   type Query {
-    allHeros(heroName: String!): [Hero]
+    uploads: [Image]
+  }
+  type Mutation {
+    singleUpload(image: Upload!): Image!
+    multipleUpload(images: [Upload!]!): [Image!]!
   }
 `;
 
