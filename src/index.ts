@@ -1,10 +1,13 @@
+require('dotenv').config()
 import express from 'express';
 import resolvers from './graphql/resolvers'
 import typeDefs from './graphql/types'
 import './config/database';
 import { ApolloServer } from 'apollo-server-express';
+import cors from './middleware/cors'
 
-const port = process.env.port || 3000; // default port to listen
+
+const {uri, port} = process.env
 
 const app = express();
 const apolloServer = new ApolloServer({ 
@@ -21,8 +24,16 @@ const apolloServer = new ApolloServer({
 });
 apolloServer.applyMiddleware({ app })
 
+console.log(process.env);
+
+if (process.env.NODE_ENV === 'development') {
+  console.log('allowing cors');
+  
+  app.use(cors)
+}
+
 // start the Express server
 app.listen( { port }, () => {
     // tslint:disable-next-line:no-console
-    console.log(`🚀 Server ready at http://localhost:${port}${apolloServer.graphqlPath}`)
+    console.log(`🚀 Server ready at ${uri}:${port}${apolloServer.graphqlPath}`)
 } );

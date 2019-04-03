@@ -19,7 +19,7 @@ const encodeSvgDataUri = (svg: string) => {
 
 const optimizeSvg = (svg: string) => {
   return new Promise(function(resolve) {
-    const svgo = new SVGO({ multipass: true, floatPrecision: 0 });
+    const svgo = new SVGO({ floatPrecision: 0 });
     svgo.optimize(svg).then(function(optimizedSVG) {
       resolve(optimizedSVG.data)
     })

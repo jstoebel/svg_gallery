@@ -1,20 +1,16 @@
 import { gql } from 'apollo-server-express';
 
 const typeDefs = gql`
-  type Image {
-    id: ID!
-    path: String!
-    fileName: String!
+  type File {
+    filename: String!
     mimetype: String!
-    altText: String!
-    svg: String!
+    encoding: String!
   }
   type Query {
-    uploads: [Image]
+    uploads: [File]
   }
   type Mutation {
-    singleUpload(image: Upload!): Image!
-    multipleUpload(images: [Upload!]!): [Image!]!
+    uploadFile(file: Upload!): File!
   }
 `;
 
