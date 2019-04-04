@@ -24,11 +24,8 @@ const apolloServer = new ApolloServer({
 });
 apolloServer.applyMiddleware({ app })
 
-console.log(process.env);
-
 if (process.env.NODE_ENV === 'development') {
   console.log('allowing cors');
-  
   app.use(cors)
 }
 

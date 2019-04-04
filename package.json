@@ -12,6 +12,7 @@
     "build": "tsc",
     "prestart": "npm run build",
     "start": "node .",
+    "devstart": "npm run prebuild && npm run prestart && nodemon .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

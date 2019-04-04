@@ -5,6 +5,8 @@ const typeDefs = gql`
     filename: String!
     mimetype: String!
     encoding: String!
+    altText: String!
+    svg: String
   }
   type Query {
     uploads: [File]

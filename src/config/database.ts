@@ -5,7 +5,10 @@ const dbConnection = new Sequelize({
   storage: './src/db/database.sqlite'
 });
 
-console.log('syncing database...');
-dbConnection.sync().then(() => console.log('database synced!'));
+if (process.env.NODE_ENV == 'development') {
+  console.log('syncing database...');
+  dbConnection.sync({force: true}).then(() => console.log('database synced!'));
+}
+
 
 export default dbConnection;
