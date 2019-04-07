@@ -9,16 +9,30 @@ const sequelize = new Sequelize({
 
 sequelize.addModels([Image])
 
-// Image.create({
-//   imagePath: '/Users/jstoebel/repos/svg_gallery/svg_gallery_api/uploads/berea_shirt.jpg',
-//   mimetype: 'whatever',
-//   encoding: 'blah',
-//   altText: 'adsa',
-// }).then((image) => {
-//   console.log('success!');
-//   console.log(image);
-// }).catch(err => {
-//   console.log(err);
-// })
+Image.create({
+  imagePath: '/Users/jstoebel/repos/svg_gallery/svg_gallery_api/uploads/picsum.jpg',
+  mimetype: 'whatever',
+  encoding: 'blah',
+  altText: 'adsa',
+}).then((image) => {
+  return image;
+})
+
+// Image
+//   .findAll()
+//   .then((images) => {
+//     console.log(`there are ${images.length} record(s)`);
+//     console.log(JSON.stringify(images));
+//     // images.forEach((image: Image) => {
+//     //   console.log(image.imagePath);
+      
+//     // })
+    
+//   }).catch((err) => {
+//     console.log(err);
+//     throw new Error(err)
+//   });
+
+
 
 export default sequelize;

@@ -1,10 +1,17 @@
-import {Table, Column, Model, AfterCreate} from 'sequelize-typescript';
+import {Table, Column, Model, AfterCreate, DataType} from 'sequelize-typescript';
 import traceImage from '../../lib/trace-image'
 
 // configure database like this! https://www.npmjs.com/package/sequelize-typescript#usage
 
 @Table
 class Image extends Model<Image> {
+
+  @Column({
+    type: DataType.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  })
+  id: number
 
   @Column
   imagePath: string
@@ -23,17 +30,18 @@ class Image extends Model<Image> {
 
   @AfterCreate
   static traceImage(instance: Image) {
-    console.log('starting afterCreate hook', instance.imagePath);
+    console.log('starting afterCreate hook on', instance.imagePath);
 
-    traceImage(instance.imagePath)
+    return traceImage(instance.imagePath)
       .then((svg: string) => {
+        console.log('heres the svg', svg);
+        
         instance.svg = svg;
-        instance.save().then(() => {
-          console.log('SVG added to image')
-        }).catch((err) => {
-          throw new Error(err)
-        })
+        return instance.update({svg})
       })
+    // console.log('about to update with', svg);
+    
+    // return instance.update({svg})
   }
 }
 
