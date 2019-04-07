@@ -2,12 +2,11 @@ require('dotenv').config()
 import express from 'express';
 import resolvers from './graphql/resolvers'
 import typeDefs from './graphql/types'
-import './config/database';
+import './db/database';
 import { ApolloServer } from 'apollo-server-express';
 import cors from './middleware/cors'
 
-
-const {uri, port} = process.env
+const {port} = process.env
 
 const app = express();
 const apolloServer = new ApolloServer({ 
@@ -32,5 +31,5 @@ if (process.env.NODE_ENV === 'development') {
 // start the Express server
 app.listen( { port }, () => {
     // tslint:disable-next-line:no-console
-    console.log(`🚀 Server ready at ${uri}:${port}${apolloServer.graphqlPath}`)
+    console.log(`🚀 Server ready port: ${port}, path: ${apolloServer.graphqlPath}`)
 } );

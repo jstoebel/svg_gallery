@@ -79,6 +79,12 @@ const traceSvg = (filePath: string, traceParams: traceParamsI ) => {
   });
 }
 
+/**
+ * Create SVG outline of an image.
+ * @param {string} filePath - the absolute path of the image to trace
+ * 
+ * @returns {Promise} Promise that resolves to the images' SVG
+ */
 const traceImage = (filePath: string) => {
   const traceParams: traceParamsI = {
     turnPolicy:   Potrace.TURNPOLICY_MINORITY,
