@@ -2,6 +2,9 @@ import fs from 'fs';
 import path from 'path';
 const appRoot = require('app-root-path').toString();
 import Image from '../db/models/Image';
+import redisConfig from '../config/redis';
+import traceImage from '../lib/traceImage'
+const Queue = require('bee-queue');
 
 const saveImage = (imagePath: string, rStream: fs.ReadStream) => {
 
@@ -42,8 +45,6 @@ export const resolvers = {
 
       const altText = filename; // FIXME
 
-      console.log(Image);
-      
       // 3. Record the file upload in your DB.
       const recordSave = Image.create({
         imagePath,
@@ -52,8 +53,23 @@ export const resolvers = {
         altText,
       })
 
-      return Promise.all([fileSave, recordSave])
-             .then((_values) => {
+      return Promise.all<[void, Image]>([fileSave, recordSave])
+              .then(([_, image]) => {
+
+              // set up a worker to process svg
+              const svgQueue = new Queue('svg');
+              const job = svgQueue.createJob({image}).save()
+
+              svgQueue.process(async (job) => {
+
+                job.reportProgress({msg: 'starting job...'})
+                const image = job.data.image;
+                return traceImage(image.imagePath)
+                  .then((svg: string) => {
+                    image.svg = svg;
+                    return image.save()
+                  })
+              })
               return { filename, mimetype, encoding, altText };
              }).catch((error) => {
                console.log(error)

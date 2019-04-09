@@ -23,7 +23,7 @@
     "@types/validator": "^10.11.0",
     "apollo-server-express": "^2.4.8",
     "app-root-path": "^2.2.1",
-    "connect-mongo": "^2.0.3",
+    "bee-queue": "^1.2.2",
     "dotenv": "^7.0.0",
     "express": "^4.16.4",
     "express-graphql": "^0.7.1",
@@ -31,12 +31,13 @@
     "graphql-tools": "^4.0.4",
     "mongoose-attachments-localfs": "^0.1.1",
     "node-vibrant": "^3.2.0-alpha",
+    "pg": "^7.9.0",
+    "pg-hstore": "^2.3.2",
     "potrace": "^2.1.1",
     "reflect-metadata": "^0.1.13",
     "sequelize": "^5.2.7",
     "sequelize-cli": "^5.4.0",
     "sequelize-typescript": "^1.0.0-alpha.9",
-    "sqlite3": "^4.0.6",
     "svgo": "^1.2.0"
   },
   "devDependencies": {

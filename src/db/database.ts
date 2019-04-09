@@ -1,38 +1,25 @@
 import {Sequelize} from 'sequelize-typescript';
 import Image from './models/Image'
-const appRoot = require('app-root-path').toString();
 
-const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: appRoot + '/db/database.sqlite',
-});
+// help setting up postgres locally https://gist.github.com/ibraheem4/ce5ccd3e4d7a65589ce84f2a3b7c23a3
+
+let sequelize;
+if (process.env.NODE_ENV === 'development') {
+  sequelize = new Sequelize('svg_gallery', 'svg_gallery', null, {
+    host: 'localhost',
+    dialect: 'postgres',
+  });
+}
 
 sequelize.addModels([Image])
 
-Image.create({
-  imagePath: '/Users/jstoebel/repos/svg_gallery/svg_gallery_api/uploads/picsum.jpg',
-  mimetype: 'whatever',
-  encoding: 'blah',
-  altText: 'adsa',
-}).then((image) => {
-  return image;
-})
-
-// Image
-//   .findAll()
-//   .then((images) => {
-//     console.log(`there are ${images.length} record(s)`);
-//     console.log(JSON.stringify(images));
-//     // images.forEach((image: Image) => {
-//     //   console.log(image.imagePath);
-      
-//     // })
-    
-//   }).catch((err) => {
-//     console.log(err);
-//     throw new Error(err)
-//   });
-
-
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log('Database connection has been established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
 
 export default sequelize;
