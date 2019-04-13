@@ -1,4 +1,4 @@
-import {Table, Column, Model, AfterCreate, DataType} from 'sequelize-typescript';
+import {Table, Column, Model, DataType, BeforeCreate, BeforeUpdate} from 'sequelize-typescript';
 
 // configure database like this! https://www.npmjs.com/package/sequelize-typescript#usage
 
@@ -26,6 +26,27 @@ class Image extends Model<Image> {
 
   @Column
   svg?: string
+
+  @Column({
+    type: DataType.DATE
+  })
+  createdAt: Date
+
+  @Column({
+    type: DataType.DATE
+  })
+  updatedAt: Date
+
+  @BeforeCreate
+  static setCreatedAt(instance: Image) {
+    instance.createdAt = new Date();
+    instance.updatedAt = new Date();
+  }
+
+  @BeforeUpdate
+  static setUpdatedAt(instance: Image) {
+    instance.updatedAt = new Date();
+  }
 }
 
 export default Image

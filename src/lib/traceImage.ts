@@ -100,7 +100,7 @@ const traceImage = (filePath: string) => {
   const color = Potrace.COLOR_AUTO;
   let getFillColor = extractMostProminentColor(filePath);
 
-  return new Promise((resolve, reject) => {
+  return new Promise<string>((resolve, reject) => {
     getFillColor.then(function(color) {
       traceParams.color = color;
       return traceSvg(filePath, traceParams);

@@ -2,15 +2,19 @@ import fs from 'fs';
 import path from 'path';
 const appRoot = require('app-root-path').toString();
 import Image from '../db/models/Image';
-import redisConfig from '../config/redis';
 import traceImage from '../lib/traceImage'
-const Queue = require('bee-queue');
+import kue from 'kue'
+
+import logger from '../logger'
+
+
+const jobs = kue.createQueue();
 
 const saveImage = (imagePath: string, rStream: fs.ReadStream) => {
 
-  console.log('hello from saveImage');  
+  logger.info('hello from saveImage');  
   return new Promise((resolve, reject) => {
-    console.log('saveImage promise');
+    logger.info('saveImage promise');
     const wStream = fs.createWriteStream(imagePath)
     const stream = rStream.pipe(wStream)
     stream.on('finish', resolve)
@@ -52,33 +56,42 @@ export const resolvers = {
         encoding,
         altText,
       })
+      const promises: [Promise<{}>, Promise<Image>] = [fileSave, recordSave]
+      return Promise.all(promises)
+              .then(async ([_, image]) => {
+                // process and return svg
+                const job = jobs.create('svg_trace', {imagePath: image.imagePath});
+                job.on( 'complete', function () {
+                  logger.info( ' Job complete' );
+                } ).on( 'failed', function () {
+                  logger.info( ' Job failed' );
+                } )
 
-      return Promise.all<[void, Image]>([fileSave, recordSave])
-              .then(([_, image]) => {
+                job.save();
 
-              // set up a worker to process svg
-              const svgQueue = new Queue('svg');
-              const job = svgQueue.createJob({image}).save()
-
-              svgQueue.process(async (job) => {
-
-                job.reportProgress({msg: 'starting job...'})
-                const image = job.data.image;
-                return traceImage(image.imagePath)
-                  .then((svg: string) => {
-                    image.svg = svg;
-                    return image.save()
+                jobs.process('svg_trace', 1, async (job, done) => {
+                  logger.info('starting to process');
+                  const svg = await traceImage(job.data.imagePath)
+                  image.update({svg}).then((image) => {
+                    logger.info('image updated');
+                    done();
+                  }).catch((err) => {
+                    logger.info(err);
+                    done();
                   })
-              })
-              return { filename, mimetype, encoding, altText };
+                })
+
+                return { filename, mimetype, encoding, altText };
              }).catch((error) => {
-               console.log(error)
+               logger.info(error)
                throw new Error(error)
              })
       // 4. Get SVG outline and update DB -> after create hook
     }
 },
 };
+
+console.log('about to export resolvers');
 
 export default resolvers;
 
