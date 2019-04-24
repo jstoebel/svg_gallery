@@ -1,20 +1,17 @@
 import fs from 'fs';
 import path from 'path';
 const appRoot = require('app-root-path').toString();
-import Image from '../db/models/Image';
+import Image from '../models/Image';
 import traceImage from '../lib/traceImage'
 import kue from 'kue'
-
-import logger from '../logger'
-
 
 const jobs = kue.createQueue();
 
 const saveImage = (imagePath: string, rStream: fs.ReadStream) => {
 
-  logger.info('hello from saveImage');  
+  console.log('hello from saveImage');  
   return new Promise((resolve, reject) => {
-    logger.info('saveImage promise');
+    console.log('saveImage promise');
     const wStream = fs.createWriteStream(imagePath)
     const stream = rStream.pipe(wStream)
     stream.on('finish', resolve)
@@ -62,28 +59,28 @@ export const resolvers = {
                 // process and return svg
                 const job = jobs.create('svg_trace', {imagePath: image.imagePath});
                 job.on( 'complete', function () {
-                  logger.info( ' Job complete' );
+                  console.log( ' Job complete' );
                 } ).on( 'failed', function () {
-                  logger.info( ' Job failed' );
+                  console.log( ' Job failed' );
                 } )
 
                 job.save();
 
                 jobs.process('svg_trace', 1, async (job, done) => {
-                  logger.info('starting to process');
+                  console.log('starting to process');
                   const svg = await traceImage(job.data.imagePath)
                   image.update({svg}).then((image) => {
-                    logger.info('image updated');
+                    console.log('image updated');
                     done();
                   }).catch((err) => {
-                    logger.info(err);
+                    console.log(err);
                     done();
                   })
                 })
 
                 return { filename, mimetype, encoding, altText };
              }).catch((error) => {
-               logger.info(error)
+               console.log(error)
                throw new Error(error)
              })
       // 4. Get SVG outline and update DB -> after create hook
