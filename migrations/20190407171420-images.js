@@ -4,17 +4,39 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable('Images', { 
       id: {
-        type: Sequelize.INTEGER,
-        primary: true,
-        autoincrement: true
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER
       },
-      imagePath: Sequelize.STRING,
-      mimetype: Sequelize.STRING,
-      encoding: Sequelize.STRING,
-      altText: Sequelize.STRING,
-      svg: Sequelize.TEXT,
-      createdAt: Sequelize.DATE,
-      updatedAt: Sequelize.DATE
+      imagePath: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      mimetype: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      encoding: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      altText: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      svg: {
+        type: Sequelize.TEXT,
+        allowNull: true
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      }
     });
   },
 
