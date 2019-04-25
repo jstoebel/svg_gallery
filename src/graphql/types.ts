@@ -2,7 +2,7 @@ import { gql } from 'apollo-server-express';
 
 const typeDefs = gql`
   type File {
-    id: Integer!
+    id: Int!
     imagePath: String!
     mimetype: String!
     encoding: String!
@@ -10,7 +10,7 @@ const typeDefs = gql`
     svg: String
   }
   type Query {
-    uploads: [File]
+    uploads: [File!]!
   }
   type Mutation {
     uploadFile(file: Upload!): File!
