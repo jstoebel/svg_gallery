@@ -2,7 +2,8 @@ import { gql } from 'apollo-server-express';
 
 const typeDefs = gql`
   type File {
-    filename: String!
+    id: Integer!
+    imagePath: String!
     mimetype: String!
     encoding: String!
     altText: String!
