@@ -1,4 +1,4 @@
-import {Table, Column, Model, DataType, BeforeCreate, BeforeUpdate} from 'sequelize-typescript';
+import {Table, Column, Model, DataType, BeforeCreate, BeforeUpdate, Unique} from 'sequelize-typescript';
 
 // configure database like this! https://www.npmjs.com/package/sequelize-typescript#usage
 
@@ -12,7 +12,9 @@ class Image extends Model<Image> {
   })
   id: number
 
-  @Column
+  @Column({
+    unique: true
+  })
   imagePath: string
 
   @Column

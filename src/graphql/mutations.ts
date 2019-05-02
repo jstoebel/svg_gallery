@@ -2,10 +2,17 @@ import fs from 'fs';
 import path from 'path';
 const appRoot = require('app-root-path').toString();
 import Image from '../models/Image';
-import traceImage from '../lib/traceImage'
 import kue from 'kue'
+import uuidv4 from 'uuid/v4'
 
-const jobs = kue.createQueue();
+const jobs = kue.createQueue({
+  redis: {
+    host: 'localhost',
+    port: 6379,
+  }
+});
+
+kue.app.listen(4000)
 
 const saveImage = (imagePath: string, rStream: fs.ReadStream) => {
 
@@ -32,10 +39,10 @@ export async function uploadFile(parent, { file }) {
     throw new Error('Uploaded file is not an image!')
   }
 
-  const imagePath = path.join(appRoot.toString(), 'uploads', filename);
-  // 2. Stream file contents into cloud storage:
-  // https://nodejs.org/api/stream.html
-  const fileSave = saveImage(imagePath, createReadStream())
+  const imageId = uuidv4();
+  const imagePath = path.join('uploads', imageId);
+  const fullImagePath = path.join(appRoot.toString(), imagePath)
+  const fileSave = saveImage(fullImagePath, createReadStream())
 
   const altText = filename; // FIXME
 
@@ -51,30 +58,22 @@ export async function uploadFile(parent, { file }) {
           .then(async ([_, image]) => {
             // process and return svg
             const job = jobs.create('svg_trace', {imagePath: image.imagePath});
-            job.on( 'complete', function () {
+            job.on( 'progess', (progress: number, svg: string) => {
               console.log( ' Job complete' );
-            } ).on( 'failed', function () {
-              console.log( ' Job failed' );
-            } )
-
-            job.save();
-
-            jobs.process('svg_trace', 1, async (job, done) => {
-              console.log('starting to process');
-              const svg = await traceImage(job.data.imagePath)
-              image.update({svg}).then((image) => {
-                console.log('image updated');
-                done();
+              image.update({svg}).then(() => {
+                console.log('updated image with svg');
               }).catch((err) => {
                 console.log(err);
-                done();
               })
+            }).on( 'failed', function () {
+              console.log( 'Job failed' );
             })
+
+            job.save();
 
             return { filename, mimetype, encoding, altText };
          }).catch((error) => {
            console.log(error)
            throw new Error(error)
          })
-  // 4. Get SVG outline and update DB -> after create hook
 }
