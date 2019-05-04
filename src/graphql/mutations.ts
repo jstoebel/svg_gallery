@@ -18,7 +18,6 @@ const saveImage = (imagePath: string, rStream: fs.ReadStream) => {
 
   console.log('hello from saveImage');  
   return new Promise((resolve, reject) => {
-    console.log('saveImage promise');
     const wStream = fs.createWriteStream(imagePath)
     const stream = rStream.pipe(wStream)
     stream.on('finish', resolve)
@@ -58,15 +57,18 @@ export async function uploadFile(parent, { file }) {
           .then(async ([_, image]) => {
             // process and return svg
             const job = jobs.create('svg_trace', {imagePath: image.imagePath});
-            job.on( 'progess', (progress: number, svg: string) => {
+            job.on( 'progress', (progress: number, svg: string) => {
               console.log( ' Job complete' );
               image.update({svg}).then(() => {
                 console.log('updated image with svg');
               }).catch((err) => {
                 console.log(err);
               })
-            }).on( 'failed', function () {
+            }).on( 'error', function () {
               console.log( 'Job failed' );
+            }).on('complete', (result) => {
+              console.log('job complete', result);
+              
             })
 
             job.save();
