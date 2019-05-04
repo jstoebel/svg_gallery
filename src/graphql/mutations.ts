@@ -12,8 +12,6 @@ const jobs = kue.createQueue({
   }
 });
 
-kue.app.listen(4000)
-
 const saveImage = (imagePath: string, rStream: fs.ReadStream) => {
 
   console.log('hello from saveImage');  
@@ -39,8 +37,9 @@ export async function uploadFile(parent, { file }) {
   }
 
   const imageId = uuidv4();
-  const imagePath = path.join('uploads', imageId);
-  const fullImagePath = path.join(appRoot.toString(), imagePath)
+  const imageName = imageId + '.jpg'
+  const imagePath = path.join('uploads', imageName);
+  const fullImagePath = path.join(appRoot.toString(), 'public', imagePath)
   const fileSave = saveImage(fullImagePath, createReadStream())
 
   const altText = filename; // FIXME
@@ -56,7 +55,7 @@ export async function uploadFile(parent, { file }) {
   return Promise.all(promises)
           .then(async ([_, image]) => {
             // process and return svg
-            const job = jobs.create('svg_trace', {imagePath: image.imagePath});
+            const job = jobs.create('svg_trace', {imagePath: fullImagePath});
             job.on( 'progress', (progress: number, svg: string) => {
               console.log( ' Job complete' );
               image.update({svg}).then(() => {
