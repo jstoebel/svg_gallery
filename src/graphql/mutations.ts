@@ -23,7 +23,9 @@ const saveImage = (imagePath: string, rStream: fs.ReadStream) => {
   })
 } 
 
-export async function uploadFile(parent, { file }) {
+export async function uploadFile(parent, { file, altText, title }) {
+  console.log('hello from uploadFile mutation resolver', arguments);
+  
   const { createReadStream, filename, mimetype, encoding }: {
     createReadStream: Function,
     filename: string,
@@ -42,14 +44,13 @@ export async function uploadFile(parent, { file }) {
   const fullImagePath = path.join(appRoot.toString(), 'public', imagePath)
   const fileSave = saveImage(fullImagePath, createReadStream())
 
-  const altText = filename; // FIXME
-
   // 3. Record the file upload in your DB.
   const recordSave = Image.create({
     imagePath,
     mimetype,
     encoding,
     altText,
+    title,
   })
   const promises: [Promise<{}>, Promise<Image>] = [fileSave, recordSave]
   return Promise.all(promises)
@@ -72,7 +73,7 @@ export async function uploadFile(parent, { file }) {
 
             job.save();
 
-            return { filename, mimetype, encoding, altText };
+            return { filename, mimetype, encoding, altText, imagePath, title };
          }).catch((error) => {
            console.log(error)
            throw new Error(error)

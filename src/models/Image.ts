@@ -12,6 +12,9 @@ class Image extends Model<Image> {
   })
   id: number
 
+  @Column
+  title: string
+
   @Column({
     unique: true
   })
