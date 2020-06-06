@@ -22,7 +22,7 @@
   "dependencies": {
     "@types/svgo": "^1.0.1",
     "@types/validator": "^10.11.0",
-    "apollo-server-express": "^2.4.8",
+    "apollo-server-express": "^2.14.2",
     "app-root-path": "^2.2.1",
     "dotenv": "^7.0.0",
     "express": "^4.16.4",
